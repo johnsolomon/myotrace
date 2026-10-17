@@ -1,7 +1,7 @@
 {
   "v": 2,
   "name": "Myotrace demonstration",
-  "repo": "",
+  "repo": "johnsolomon/myotrace",
   "branch": "main",
   "data": "data/workspace.enc",
   "default": "data/default-workspace.json.gz",
@@ -15,7 +15,10 @@
         "iv": "xGzcW/fwm/ExADZa",
         "ct": "vhWO77Ajx1fTZtmzSWz7tkkL1+9efsHhDhzc2jk7ArGohEc="
       },
-      "token": null
+      "token": {
+        "iv": "6FycbAWFtKQ+H9qM",
+        "ct": "gw/yb9N7tDOGPijoJBdULcQnTEkNYQRNTxBvU3WaTp7k5OPPLrmRRqGajzNqTkIla3zSGHB7HpE8NKv6EF1+EpDWInXQicS226Uq2DBNFloe6d7aSR4lz/qktJu+etryIOY0eHGn8HRfnseEjQ=="
+      }
     }
   ]
 }

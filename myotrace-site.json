@@ -1,0 +1,21 @@
+{
+  "v": 2,
+  "name": "Myotrace demonstration",
+  "repo": "",
+  "branch": "main",
+  "data": "data/workspace.enc",
+  "default": "data/default-workspace.json.gz",
+  "accounts": [
+    {
+      "user": "myotrace",
+      "salt": "LiRdz9qsYrLTvcWgFNwNSQ==",
+      "dsalt": "RhfUrmjIQjoihgGFbCgRWg==",
+      "iter": 310000,
+      "check": {
+        "iv": "xGzcW/fwm/ExADZa",
+        "ct": "vhWO77Ajx1fTZtmzSWz7tkkL1+9efsHhDhzc2jk7ArGohEc="
+      },
+      "token": null
+    }
+  ]
+}

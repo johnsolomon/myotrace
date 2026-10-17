@@ -24888,12 +24888,28 @@ function siteRef(){ return "?ref="+encodeURIComponent(SITE.cfg.branch||"main"); 
 /* ---------------------------------------------------------------- start */
 function siteInit(){
   if(typeof fetch==="undefined" || typeof crypto==="undefined" || !crypto.subtle || !/^https?:$/.test(location.protocol)){ document.body.classList.remove("site-pending"); return Promise.resolve(false); }
-  return fetch(SITE_CFG_FILE, {cache:"no-store"}).then(function(r){ return r.ok?r.json():null; }).catch(function(){ return null; }).then(function(cfg){
+  return fetch(SITE_CFG_FILE, {cache:"no-store"}).then(function(r){ return r.ok?r.json():null; }).catch(function(){ return null; }).then(siteCfgFresh).then(function(cfg){
     document.body.classList.remove("site-pending");
     if(!cfg || cfg.v!==2 || !(cfg.accounts||[]).length) return false;
     SITE.cfg=cfg; SITE.state="locked"; document.body.classList.add("site-locked");
-    if(!SITE.cfg.repo){ var m=/^([\w-]+)\.github\.io$/i.exec(location.hostname), seg=location.pathname.split("/").filter(Boolean)[0]; if(m) SITE.cfg.repoGuess=m[1]+"/"+(seg&&!/\.html?$/.test(seg)?seg:(m[1]+".github.io")); }
+    if(!SITE.cfg.repo){ var g=siteCfgRepo(null); if(g) SITE.cfg.repoGuess=g; }
     siteLoginEl(); return true; });
+}
+/* GitHub Pages serves the settings file from a cache that can be up to ten minutes old, so a key
+   connected on one device was not yet seen by another, which asked for it again. The repository's
+   own copy is read instead (public, no key needed, always current); the page's copy is the fallback. */
+function siteCfgRepo(cfg){
+  if(cfg && cfg.repo) return cfg.repo;
+  var m=/^([\w-]+)\.github\.io$/i.exec(location.hostname), seg=location.pathname.split("/").filter(Boolean)[0];
+  return m ? m[1]+"/"+(seg&&!/\.html?$/.test(seg)?seg:(m[1]+".github.io")) : "";
+}
+function siteCfgFresh(cfg){
+  var repo=siteCfgRepo(cfg); if(!/^[\w.-]+\/[\w.-]+$/.test(repo)) return cfg;
+  var url="https://api.github.com/repos/"+repo.split("/").map(encodeURIComponent).join("/")+"/contents/"+SITE_CFG_FILE+"?ref="+encodeURIComponent((cfg&&cfg.branch)||"main");
+  return fetch(url, {cache:"no-store"}).then(function(r){ if(!r.ok) throw new Error("no"); return r.json(); })
+    .then(function(j){ var c=JSON.parse(new TextDecoder().decode(b64d(String(j.content||"").replace(/\s/g,""))));
+      return (c && c.v===2 && (c.accounts||[]).length) ? c : cfg; })
+    .catch(function(){ return cfg; });
 }
 function siteLoginEl(msg){
   var old=document.getElementById("site-login"); if(old) old.remove();
